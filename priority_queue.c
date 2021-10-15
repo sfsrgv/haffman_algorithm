@@ -1,36 +1,40 @@
 #include "priority_queue.h"
 
-void swap(int *a, int *b) {
-    int temp = *b;
+
+void swap(struct Node *a, struct Node *b) {
+    struct Node temp = *b;
     *b = *a;
     *a = temp;
 }
 
-void sort(int *array, int array_size, int i) {
-    if (array_size != 1) {
-        int largest = i;
-        int left = 2 * i + 1;
-        int right = 2 * i + 2;
-        if (left < array_size && array[left] > array[largest])
-            largest = left;
-        if (right < array_size && array[right] > array[largest])
-            largest = right;
-        if (largest != i) {
-            swap(&array[i], &array[largest]);
-            sort(array, array_size, largest);
+void sort_by_priority(struct Node *nodes, int begin, int end) {
+    int left = begin;
+    int right = end;
+    long long base = nodes[(begin + end) / 2].priority;
+    do {
+        while (nodes[left].priority < base)
+            left++;
+        while (nodes[right].priority > base)
+            right--;
+        if (left <= right) {
+            if (nodes[left].priority > nodes[right].priority)
+                swap(&nodes[left], &nodes[right]);
+            left++;
+            right--;
         }
-    }
+    } while (left <= right);
+    if (left < end)
+        sort_by_priority(nodes, left, end);
+    if (begin < right)
+        sort_by_priority(nodes, begin, right);
 }
 
-void insert(int *array, int number, int *size) {
+void insert(struct Node *array, struct Node node, int *size) {
     if (*size == 0) {
-        array[0] = number;
-        *size += 1;
+        array[0] = node;
     } else {
-        array[*size] = number;
-        *size += 1;
-        for (int i = *size / 2 - 1; i >= 0; i--) {
-            sort(array, *size, i);
-        }
+        array[*size] = node;
+        sort_by_priority(array, 0, *size);
     }
+    ++(*size);
 }
