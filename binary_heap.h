@@ -5,7 +5,7 @@
 #include <stdio.h>
 #include <malloc.h>
 
-#define ARRAY_SIZE 95
+#define ARRAY_SIZE 255
 #define INF 100000
 
 struct heap_node {
