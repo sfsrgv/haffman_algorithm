@@ -2,8 +2,8 @@
 
 int heap_size = 0;
 
-void swap(struct node *a, struct node *b) {
-    struct node t;
+void swap(struct heap_node *a, struct heap_node *b) {
+    struct heap_node t;
     t = *a;
     *a = *b;
     *b = t;
@@ -28,7 +28,7 @@ int get_parent(int index) {
     return -1;
 }
 
-void min_heapify(struct node *heap[], int index) {
+void min_heapify(struct heap_node *heap[], int index) {
     int left_child_index = get_left_child(index);
     int right_child_index = get_right_child(index);
 
@@ -45,22 +45,22 @@ void min_heapify(struct node *heap[], int index) {
         }
     }
 
-    // Smallest is not the node, node is not a heap
+    // Smallest is not the heap_node, heap_node is not a heap
     if (smallest != index) {
         swap(heap[index], heap[smallest]);
         min_heapify(heap, smallest);
     }
 }
 
-struct node *extract_min(struct node *heap[]) {
-    struct node *minm = heap[1];
+struct heap_node *extract_min(struct heap_node *heap[]) {
+    struct heap_node *minm = heap[1];
     heap[1] = heap[heap_size];
     heap_size--;
     min_heapify(heap, 1);
     return minm;
 }
 
-void decrease_key(struct node *heap[], int index, int priority) {
+void decrease_key(struct heap_node *heap[], int index, int priority) {
     heap[index]->priority = priority;
     while ((index > 1) && (heap[get_parent(index)]->priority > heap[index]->priority)) {
         swap(heap[index], heap[get_parent(index)]);
@@ -68,9 +68,9 @@ void decrease_key(struct node *heap[], int index, int priority) {
     }
 }
 
-void insert(struct node *heap[], struct node *key) {
+void insert(struct heap_node *heap[], struct heap_node *key) {
     heap_size++;
-    heap[heap_size] = malloc(sizeof(struct node));
+    heap[heap_size] = malloc(sizeof(struct heap_node));
     heap[heap_size]->symbol = key->symbol;
     heap[heap_size]->right = key->right;
     heap[heap_size]->left = key->left;

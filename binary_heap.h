@@ -8,35 +8,35 @@
 #define ARRAY_SIZE 95
 #define INF 100000
 
-struct node {
+struct heap_node {
     char symbol;
     int priority;
-    struct node *left;
-    struct node *right;
+    struct heap_node *left;
+    struct heap_node *right;
 };
 
 // Swaps to nodes
-void swap(struct node *a, struct node *b);
+void swap(struct heap_node *a, struct heap_node *b);
 
-// Returns right child of a node of a tree
+// Returns right child of a heap_node of a tree
 int get_right_child(int index);
 
-// Returns left child of a node of a tree
+// Returns left child of a heap_node of a tree
 int get_left_child(int index);
 
-// Returns left parent of a node of a tree
+// Returns left parent of a heap_node of a tree
 int get_parent(int index);
 
 // Sorting tree
-void min_heapify(struct node *heap[], int index);
+void min_heapify(struct heap_node *heap[], int index);
 
 // Returns minimum value and delete it from heap
-struct node *extract_min(struct node *heap[]);
+struct heap_node *extract_min(struct heap_node *heap[]);
 
 // Changes priority of value at index
-void decrease_key(struct node *heap[], int index, int priority);
+void decrease_key(struct heap_node *heap[], int index, int priority);
 
-// Inserting node to a tree
-void insert(struct node *heap[], struct node *key);
+// Inserting heap_node to a tree
+void insert(struct heap_node *heap[], struct heap_node *key);
 
 #endif //HAFFMAN_ALGORITHM_BINARY_HEAP_H
