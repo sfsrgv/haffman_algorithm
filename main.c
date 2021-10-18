@@ -9,6 +9,23 @@
 extern int heap_size;
 extern struct symbol_code new_codes[ARRAY_SIZE];
 
+void print_node(struct heap_node node) {
+    char left = (node.left != NULL) ? node.left->symbol : 'n';
+    char right = (node.right != NULL) ? node.right->symbol : 'n';
+    printf("%d: %c (left: %c) (right: %c)\n", node.priority, node.symbol,
+           left, right);
+}
+
+
+void print_heap(struct heap_node A[]) {
+    int i;
+    for (i = 1; i <= heap_size; i++) {
+        print_node(A[i]);
+    }
+    printf("\n");
+}
+
+
 int main(int argc, char **argv) {
     //Getting path to text file_read
     char_auto_ptr reading_path;
@@ -22,12 +39,12 @@ int main(int argc, char **argv) {
     } else {
         if (argc < 2) {
             reading_path = argv[1];
-            printf("Enter path to reading file_read: ");
+            printf("Enter path to reading file: ");
             READ_LINE(reading_path);
         } else
             reading_path = argv[1];
         if (argc < 3) {
-            printf("Enter path to writing file_read: ");
+            printf("Enter path to writing file: ");
             READ_LINE(writing_path);
         } else
             writing_path = argv[2];
@@ -76,13 +93,21 @@ int main(int argc, char **argv) {
         new_node.symbol = 0;
         insert(heap, &new_node);
     }
-
+    print_heap(heap[1]);
     make_codes(heap[1]);
 
     printf("New codes:\n");
     for (int i = 0; i < ARRAY_SIZE; ++i)
         if (new_codes[i].code)
             printf("'%c' = %s\n", new_codes[i].symbol, new_codes[i].code);
+
+    print_heap(heap[1]);
+    char* array = malloc(sizeof (char ) * 255);
+    tree_to_array(array, heap[1], 1);
+
+    for (int i = 0; i < 255l; ++i) {
+        printf("(%c)", array[i]);
+    }
 
     file_read = fopen(reading_path, "r");
     FILE *file_write = fopen(writing_path, "w");
@@ -94,6 +119,7 @@ int main(int argc, char **argv) {
             symbol = (char) getc(file_read);
         }
     }
+
     fclose(file_read);
     fclose(file_write);
     return 0;

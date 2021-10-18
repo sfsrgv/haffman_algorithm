@@ -2,7 +2,7 @@
 #define HAFFMAN_ALGORITHM_MAKE_CODES_H
 
 #include "queue.h"
-#include "binary_heap.h"
+#include "minimum_heap.h"
 
 struct symbol_code {
     char symbol;

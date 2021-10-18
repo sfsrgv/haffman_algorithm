@@ -1,5 +1,5 @@
-#ifndef HAFFMAN_ALGORITHM_BINARY_HEAP_H
-#define HAFFMAN_ALGORITHM_BINARY_HEAP_H
+#ifndef HAFFMAN_ALGORITHM_MINIMUM_HEAP_H
+#define HAFFMAN_ALGORITHM_MINIMUM_HEAP_H
 
 #include <stddef.h>
 #include <stdio.h>
@@ -39,4 +39,6 @@ void decrease_key(struct heap_node *heap[], int index, int priority);
 // Inserting heap_node to a tree
 void insert(struct heap_node *heap[], struct heap_node *key);
 
-#endif //HAFFMAN_ALGORITHM_BINARY_HEAP_H
+void tree_to_array(char* array, struct heap_node *root, int node_number);
+
+#endif //HAFFMAN_ALGORITHM_MINIMUM_HEAP_H

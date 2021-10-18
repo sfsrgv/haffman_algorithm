@@ -1,4 +1,4 @@
-#include "binary_heap.h"
+#include "minimum_heap.h"
 
 int heap_size = 0;
 
@@ -76,4 +76,15 @@ void insert(struct heap_node *heap[], struct heap_node *key) {
     heap[heap_size]->left = key->left;
     heap[heap_size]->priority = INF;
     decrease_key(heap, heap_size, key->priority);
+}
+
+
+void tree_to_array(char* array, struct heap_node *root, int node_number) {
+    array[node_number] = root->symbol;
+    if (root->left != NULL) {
+        tree_to_array(array, root->left, node_number * 2);
+    }
+    if (root->right != NULL) {
+        tree_to_array(array, root->right, node_number * 2 + 1);
+    }
 }
