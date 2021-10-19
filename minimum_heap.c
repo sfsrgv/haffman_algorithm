@@ -1,6 +1,7 @@
 #include "minimum_heap.h"
 
 int heap_size = 0;
+int64_t real_tree_size = 1;
 
 void swap(struct heap_node *a, struct heap_node *b) {
     struct heap_node t;
@@ -80,6 +81,7 @@ void insert(struct heap_node *heap[], struct heap_node *key) {
 
 
 void tree_to_array(char* array, struct heap_node *root, int node_number) {
+    real_tree_size = real_tree_size < node_number ? node_number : real_tree_size;
     array[node_number] = root->symbol;
     if (root->left != NULL) {
         tree_to_array(array, root->left, node_number * 2);

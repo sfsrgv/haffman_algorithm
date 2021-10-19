@@ -4,6 +4,9 @@
 #include <stddef.h>
 #include <stdio.h>
 #include <malloc.h>
+#include <stdint-gcc.h>
+
+#include "asprintf.h"
 
 #define ARRAY_SIZE 255
 #define INF 100000
