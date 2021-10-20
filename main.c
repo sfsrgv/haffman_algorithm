@@ -3,7 +3,7 @@
 // Create program for coding and decoding text file using Haffman algorithm
 //
 // To compile program use command:
-// gcc main.c minimum_heap.c char_reading.c queue.c make_codes.c
+// gcc main.c minimum_heap.c char_reading.c queue.c make_codes.c leaves.c
 
 #include <stdio.h>
 #include <string.h>
@@ -11,46 +11,13 @@
 
 #include "char_reading.h"
 #include "make_codes.h"
+#include "leaves.h"
 
 extern int heap_size;
 extern struct symbol_code new_codes[ARRAY_SIZE];
 extern int64_t real_tree_size;
 
 #define BUFFER_LENGTH 10
-
-struct leaf {
-    int tree_index;
-    char symbol;
-};
-
-void Swap(struct leaf *lhs, struct leaf *rhs) {
-    struct leaf buffer = *lhs;
-    *lhs = *rhs;
-    *rhs = buffer;
-}
-
-void SortByIndex(struct leaf *leaves, int begin, int end) {
-    int left = begin;
-    int right = end;
-    long long base = leaves[(begin + end) / 2].tree_index;
-    do {
-        while (leaves[left].tree_index < base)
-            left++;
-        while (leaves[right].tree_index > base)
-            right--;
-        if (left <= right) {
-            if (leaves[left].tree_index > leaves[right].tree_index)
-                Swap(&leaves[left], &leaves[right]);
-            left++;
-            right--;
-        }
-    } while (left <= right);
-    if (left < end)
-        SortByIndex(leaves, left, end);
-    if (begin < right)
-        SortByIndex(leaves, begin, right);
-}
-
 
 int main(int argc, char **argv) {
     //Getting path to text file_read
@@ -127,12 +94,6 @@ int main(int argc, char **argv) {
         // Counting codes from tree
         make_codes(heap[1]);
 
-        // Printing codes to console
-        printf("New codes:\n");
-        for (int i = 0; i < ARRAY_SIZE; ++i)
-            if (new_codes[i].code && new_codes[i].symbol != '0')
-                printf("'%c' = %s\n", new_codes[i].symbol, new_codes[i].code);
-
         // Making file with code
         FILE *coding_file = fopen("code", "w");
         fprintf(coding_file, "%d\n", number_of_unique);
@@ -169,7 +130,7 @@ int main(int argc, char **argv) {
             line[strlen(line) - 1] = '\0';
             number_of_leaves = atoi(line);
             leaves_indexes = (struct leaf *) malloc(sizeof(struct leaf) * number_of_leaves);
-            // Filling array
+            // Filling array with leaves of tree
             for (int i = 0; i < number_of_leaves; ++i) {
                 getline(&line, &length, coding_file);
                 line[strlen(line) - 1] = '\0';
@@ -182,9 +143,7 @@ int main(int argc, char **argv) {
             return 1;
         fclose(coding_file);
 
-        SortByIndex(leaves_indexes, 0, number_of_leaves - 1);
-        for (int i = 0; i < number_of_leaves; ++i)
-            printf("%d : %d\n", leaves_indexes[i].tree_index, leaves_indexes[i].symbol);
+        sort_by_index(leaves_indexes, 0, number_of_leaves - 1);
 
         // Decoding text
         FILE *file_read = fopen(reading_path, "r");
@@ -203,7 +162,7 @@ int main(int argc, char **argv) {
                         ++leaves_position;
                     if (leaves_indexes[leaves_position].tree_index == coding_tree_position) {
                         new_symbol = leaves_indexes[leaves_position].symbol;
-                        printf("got: %c\n", new_symbol);
+                        fprintf(file_write, "%c", new_symbol);
                         break;
                     }
                 }

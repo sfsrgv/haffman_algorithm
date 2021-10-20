@@ -3,7 +3,7 @@
 int heap_size = 0;
 int64_t real_tree_size = 1;
 
-void swap(struct heap_node *lhs, struct heap_node *rhs) {
+void swap_nodes(struct heap_node *lhs, struct heap_node *rhs) {
     struct heap_node t;
     t = *lhs;
     *lhs = *rhs;
@@ -48,7 +48,7 @@ void min_heapify(struct heap_node *heap[], int index) {
 
     // Smallest is not the heap_node, heap_node is not a heap
     if (smallest != index) {
-        swap(heap[index], heap[smallest]);
+        swap_nodes(heap[index], heap[smallest]);
         min_heapify(heap, smallest);
     }
 }
@@ -64,7 +64,7 @@ struct heap_node *extract_min(struct heap_node *heap[]) {
 void decrease_key(struct heap_node *heap[], int index, int priority) {
     heap[index]->priority = priority;
     while ((index > 1) && (heap[get_parent(index)]->priority > heap[index]->priority)) {
-        swap(heap[index], heap[get_parent(index)]);
+        swap_nodes(heap[index], heap[get_parent(index)]);
         index = get_parent(index);
     }
 }

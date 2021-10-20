@@ -19,7 +19,7 @@ struct heap_node {
 };
 
 // Swaps to nodes
-void swap(struct heap_node *lhs, struct heap_node *rhs);
+void swap_nodes(struct heap_node *lhs, struct heap_node *rhs);
 
 // Returns right child of a heap_node of a tree
 int get_right_child(int index);
