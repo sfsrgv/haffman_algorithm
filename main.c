@@ -87,7 +87,7 @@ int main(int argc, char **argv) {
             new_node.right = extract_min(heap);
             new_node.priority = new_node.left->priority + new_node.right->priority;
             // Symbol of all nodes except leaves will be NULL to distinguish them
-            new_node.symbol = '0';
+            new_node.symbol = 0;
             insert(heap, &new_node);
         }
 
@@ -97,7 +97,7 @@ int main(int argc, char **argv) {
         // Making file with code
         FILE *coding_file = fopen("code", "w");
         fprintf(coding_file, "%d\n", number_of_unique);
-        tree_to_array(heap[1], 1, coding_file);
+        tree_to_file(heap[1], 1, coding_file);
 
         //Print coded text to response file
         file_read = fopen(reading_path, "r");

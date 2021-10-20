@@ -43,6 +43,6 @@ void decrease_key(struct heap_node *heap[], int index, int priority);
 void insert(struct heap_node *heap[], struct heap_node *key);
 
 // Creating array version of code tree in order to write it file
-void tree_to_array(struct heap_node *root, int node_number, FILE* file);
+void tree_to_file(struct heap_node *root, int node_number, FILE* file);
 
 #endif //HAFFMAN_ALGORITHM_MINIMUM_HEAP_H

@@ -79,15 +79,14 @@ void insert(struct heap_node *heap[], struct heap_node *key) {
     decrease_key(heap, heap_size, key->priority);
 }
 
-void tree_to_array(struct heap_node *root, int node_number, FILE *file) {
+void tree_to_file(struct heap_node *root, int node_number, FILE *file) {
     real_tree_size = real_tree_size < node_number ? node_number : real_tree_size;
-    //array[node_number] = root->symbol;
-    if (root->symbol != '0')
+    if (root->symbol != 0)
         fprintf(file, "%d %d\n", node_number, root->symbol);
     if (root->left != NULL) {
-        tree_to_array(root->left, node_number * 2, file);
+        tree_to_file(root->left, node_number * 2, file);
     }
     if (root->right != NULL) {
-        tree_to_array(root->right, node_number * 2 + 1, file);
+        tree_to_file(root->right, node_number * 2 + 1, file);
     }
 }
