@@ -19,7 +19,7 @@ struct heap_node {
 };
 
 // Swaps to nodes
-void swap(struct heap_node *a, struct heap_node *b);
+void swap(struct heap_node *lhs, struct heap_node *rhs);
 
 // Returns right child of a heap_node of a tree
 int get_right_child(int index);
@@ -42,6 +42,7 @@ void decrease_key(struct heap_node *heap[], int index, int priority);
 // Inserting heap_node to a tree
 void insert(struct heap_node *heap[], struct heap_node *key);
 
+// Creating array version of code tree in order to write it file
 void tree_to_array(char* array, struct heap_node *root, int node_number);
 
 #endif //HAFFMAN_ALGORITHM_MINIMUM_HEAP_H

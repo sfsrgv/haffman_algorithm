@@ -4,8 +4,6 @@
 #include <stddef.h>
 #include <malloc.h>
 
-#include "asprintf.h"
-
 struct queue_node {
     int value;
     struct queue_node *next;
