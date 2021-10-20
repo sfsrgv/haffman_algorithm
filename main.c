@@ -18,6 +18,40 @@ extern int64_t real_tree_size;
 
 #define BUFFER_LENGTH 10
 
+struct leaf {
+    int tree_index;
+    char symbol;
+};
+
+void Swap(struct leaf *lhs, struct leaf *rhs) {
+    struct leaf buffer = *lhs;
+    *lhs = *rhs;
+    *rhs = buffer;
+}
+
+void SortByIndex(struct leaf *leaves, int begin, int end) {
+    int left = begin;
+    int right = end;
+    long long base = leaves[(begin + end) / 2].tree_index;
+    do {
+        while (leaves[left].tree_index < base)
+            left++;
+        while (leaves[right].tree_index > base)
+            right--;
+        if (left <= right) {
+            if (leaves[left].tree_index > leaves[right].tree_index)
+                Swap(&leaves[left], &leaves[right]);
+            left++;
+            right--;
+        }
+    } while (left <= right);
+    if (left < end)
+        SortByIndex(leaves, left, end);
+    if (begin < right)
+        SortByIndex(leaves, begin, right);
+}
+
+
 int main(int argc, char **argv) {
     //Getting path to text file_read
     char_auto_ptr reading_path;
@@ -93,25 +127,16 @@ int main(int argc, char **argv) {
         // Counting codes from tree
         make_codes(heap[1]);
 
-        // Making file with codes
-        int64_t max_tree_size = 1;
-        max_tree_size <<= number_of_unique;
-        char *array_tree = malloc(sizeof(char) * max_tree_size);
-        for (int i = 0; i < max_tree_size; ++i)
-            array_tree[i] = '0';
+        // Printing codes to console
+        printf("New codes:\n");
+        for (int i = 0; i < ARRAY_SIZE; ++i)
+            if (new_codes[i].code && new_codes[i].symbol != '0')
+                printf("'%c' = %s\n", new_codes[i].symbol, new_codes[i].code);
 
-        // Creating array version of code tree in order to write it file
-        tree_to_array(array_tree, heap[1], 1);
-
+        // Making file with code
         FILE *coding_file = fopen("code", "w");
-        if (coding_file) {
-            fprintf(coding_file, "%ld\n", real_tree_size);
-            for (int i = 0; i < max_tree_size; ++i)
-                if (array_tree[i] != '0' && array_tree[i] != 0)
-                    fprintf(coding_file, "%d %d\n", i, (int) array_tree[i]);
-        }
-        free(array_tree);
-        fclose(coding_file);
+        fprintf(coding_file, "%d\n", number_of_unique);
+        tree_to_array(heap[1], 1, coding_file);
 
         //Print coded text to response file
         file_read = fopen(reading_path, "r");
@@ -133,32 +158,33 @@ int main(int argc, char **argv) {
         // Getting code tree from file
         char prev_line[ARRAY_SIZE];
         char_auto_ptr line;
-        char_auto_ptr coding_tree;
+        struct leaf *leaves_indexes;
         size_t length = 0;
+        int number_of_leaves;
 
         FILE *coding_file = fopen("code", "r");
         if (coding_file) {
             // Getting size of array
             getline(&line, &length, coding_file);
             line[strlen(line) - 1] = '\0';
-            coding_tree = (char *) malloc(sizeof(char) * atoi(line));
-            for (int i = 0; i < atoi(line); ++i)
-                coding_tree[i] = '0';
-            getline(&line, &length, coding_file);
-
+            number_of_leaves = atoi(line);
+            leaves_indexes = (struct leaf *) malloc(sizeof(struct leaf) * number_of_leaves);
             // Filling array
-            while (strcmp(line, prev_line) != 0) {
-                char index_string[BUFFER_LENGTH];
-                char symbol_string[BUFFER_LENGTH];
-                strncpy(index_string, line, strchr(line, ' ') - line);
-                strcpy(symbol_string, strchr(line, ' '));
-                coding_tree[atoi(index_string)] = (char) atoi(symbol_string);
-                strcpy(prev_line, line);
+            for (int i = 0; i < number_of_leaves; ++i) {
                 getline(&line, &length, coding_file);
+                line[strlen(line) - 1] = '\0';
+                char symbol_string[BUFFER_LENGTH];
+                strcpy(symbol_string, strchr(line, ' ') + 1);
+                leaves_indexes[i].tree_index = atoi(line);
+                leaves_indexes[i].symbol = (char) atoi(symbol_string);
             }
         } else
             return 1;
         fclose(coding_file);
+
+        SortByIndex(leaves_indexes, 0, number_of_leaves - 1);
+        for (int i = 0; i < number_of_leaves; ++i)
+            printf("%d : %d\n", leaves_indexes[i].tree_index, leaves_indexes[i].symbol);
 
         // Decoding text
         FILE *file_read = fopen(reading_path, "r");
@@ -166,23 +192,25 @@ int main(int argc, char **argv) {
         char old_symbol;
         if (file_read && file_write)
             do {
-                // If old symbol is 0 go to left child else go to right
-                // until meeting not 0 symbol in tree
                 char new_symbol = '0';
                 int coding_tree_position = 1;
-                while (new_symbol == '0') {
+                int leaves_position = 0;
+                while (old_symbol != EOF) {
                     old_symbol = (char) getc(file_read);
                     coding_tree_position *= 2;
                     coding_tree_position += (old_symbol - '0');
-                    new_symbol = coding_tree[coding_tree_position];
+                    while (leaves_indexes[leaves_position].tree_index < coding_tree_position)
+                        ++leaves_position;
+                    if (leaves_indexes[leaves_position].tree_index == coding_tree_position) {
+                        new_symbol = leaves_indexes[leaves_position].symbol;
+                        printf("got: %c\n", new_symbol);
+                        break;
+                    }
                 }
-                if (old_symbol != EOF)
-                    fprintf(file_write, "%c", new_symbol);
-                else
-                    break;
-            } while (1);
+            } while (old_symbol != EOF);
         fclose(file_read);
         fclose(file_write);
     }
     return 0;
 }
+
